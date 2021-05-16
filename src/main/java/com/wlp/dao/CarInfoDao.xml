@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wlp.dao.CarInfoDao">
+	
+	<sql id="Base_Column_List">
+		carId,clientId,carBrand,carNumber
+	</sql>
+	
+	<select id="getCarInfoAll" resultType="CarInfo">
+		select
+		<include refid="Base_Column_List"/>
+		from carinfo
+	</select>
+	
+	<select id="getCarInfo" resultType="CarInfo">
+		select
+		<include refid="Base_Column_List"/>
+		from carinfo
+		<where>
+			carId = #{userid}
+		</where>
+	</select>
+	
+	<insert id="insertCar" parameterType="CarInfo">
+		insert into carinfo(clientId,carBrand,carNumber)
+		values (#{clientId},#{carBrand},#{carBrand})
+	</insert>
+	
+	<delete id="deleteCar">
+		delete from carinfo where carId = #{carId}
+	</delete>
+	
+	<update id="updateCar" parameterType="CarInfo">
+		update carinfo
+		<set>
+			<if test="clientId != null">
+				clientId = #{clientId},
+			</if>
+			<if test="carBrand != null">
+				carBrand = #{carBrand},
+			</if>
+			<if test="carNumber != null">
+				carNumber = #{carNumber}
+			</if>
+		</set>
+		<where>
+			carId = #{carId}
+		</where>
+	</update>
+
+	<select id="getMax" resultType="java.lang.Integer">
+		select max(carId) from carinfo
+	</select>
+	
+	<select id="getclientCar" resultType="CarInfo">
+		SELECT carId,carBrand FROM carinfo WHERE clientId = #{clientId}
+	</select>
+</mapper>

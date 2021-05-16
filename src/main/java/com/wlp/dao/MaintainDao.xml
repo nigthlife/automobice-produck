@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wlp.dao.MaintainDao">
+	
+	<sql id="bean_maintain">
+		Id,maintainNo,carId,maintainDate,accendantId,State,usePartsId,maintainCost,maintainInfo
+	</sql>
+	
+	<select id="getMainAll" resultMap="finish">
+		SELECT
+		Id m_id,
+		maintainNo m_no,
+		maintainDate m_date,
+		finishDate m_finish,
+	    `State` m_state,
+	    maintainCost m_cost,
+	    maintainInfo m_info,
+	    usePartsId,
+		c.`carBrand` c_name,
+		accendantId
+		FROM maintain m, carinfo c
+		WHERE m.`carId` = c.`carId` ORDER BY id DESC
+	</select>
+	
+	<select id="getAccendant" resultMap="accendant">
+		SELECT maintainNo, carId, maintainDate, maintainInfo
+		FROM maintain
+		where accendantId IS NULL
+	</select>
+	
+	<select id="getFinish" resultMap="finish">
+		select
+		m.`Id` m_id,
+		m.`maintainNo` m_no,
+		m.`maintainDate` m_date,
+		m.`finishDate` m_finish,
+		m.`State` m_state,
+		m.`maintainCost` m_cost,
+		m.`maintainInfo` m_info,
+		cl.`clientName` cl_name,
+		c.`carBrand` c_name,
+		a.`accendantName` a_name,
+		p.`partsName` p_name
+		from maintain m,carinfo c,accendant a,partsinfo p, clientinfo cl
+		where m.`carId` = c.`carId` and m.`accendantId` = a.`accendantId`
+		and m.`usePartsId` = p.`partsId` and c.`clientId` = cl.`clientId`
+	</select>
+	
+	<resultMap id="finish" type="Maintain">
+		<result column="m_id" property="id"/>
+		<result column="m_no" property="maintainNo"/>
+		<result column="m_date" property="maintainDate"/>
+		<result column="m_finish" property="finishDate"/>
+		<result column="m_state" property="state"/>
+		<result column="m_cost" property="maintainCost"/>
+		<result column="m_info" property="maintainInfo"/>
+		<result column="usePartsId" property="usePartsId"/>
+		<result column="accendantId" property="accendantId"/>
+		<association property="carInfo" javaType="CarInfo">
+			<result column="c_name" property="carBrand"/>
+			<association property="clientInfo" javaType="ClientInfo">
+				<result column="cl_name" property="clientName"/>
+			</association>
+		</association>
+		<association property="accendant" javaType="Accendant">
+			<result column="a_name" property="accendantName"/>
+		</association>
+		<association property="partsInfo" javaType="PartsInfo">
+			<result column="p_name" property="partsName"/>
+		</association>
+	</resultMap>
+	
+	<update id="dispatchAccendant" parameterType="Maintain">
+		update maintain set accendantId = #{accendantId} where maintainNo = #{maintainNo}
+	</update>
+	
+	<update id="setParts" parameterType="PartsInfo">
+		update maintain set usePartsId = #{usePartsId}
+		where Id = #{Id}
+	</update>
+	
+	<resultMap id="accendant" type="Maintain">
+		<result column="maintainNo" property="maintainNo"/>
+		<result column="maintainDate" property="maintainDate"/>
+		<result column="maintainInfo" property="maintainInfo"/>
+		<result column="carId" property="carId"/>
+	</resultMap>
+	
+	<insert id="addMaintain" parameterType="Maintain">
+		insert into maintain(carId,maintainDate,accendantId,maintainInfo)
+		values (#{carId},now(),#{accendantId},#{maintainInfo})
+	</insert>
+	
+	<select id="getMax" resultType="java.lang.Integer">
+		select max(Id) from maintain
+	</select>
+	
+	<select id="upMaintainNo" resultType="java.lang.Integer" parameterType="map">
+		update maintain set maintainNo = #{maintainNo}
+		where Id = #{Id}
+	</select>
+	
+	<update id="upMaintain" parameterType="Maintain">
+		update maintain set finishDate = #{finishDate},
+		accendantId = #{accendantId},
+		usePartsId = #{usePartsId},
+		maintainCost = #{maintainCost},
+		maintainInfo = #{maintainInfo},
+		state = #{state}
+		where Id = #{Id}
+	</update>
+</mapper>

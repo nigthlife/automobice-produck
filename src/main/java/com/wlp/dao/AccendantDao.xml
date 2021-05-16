@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wlp.dao.AccendantDao">
+    <resultMap id="BaseResultMap" type="com.wlp.bean.Accendant">
+        <id column="accendantId" jdbcType="INTEGER" property="accendantId"/>
+        <result column="accendantName" jdbcType="VARCHAR" property="accendantName"/>
+        <result column="phone" jdbcType="CHAR" property="phone"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        accendantId, accendantName, phone
+    </sql>
+	
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from accendant
+        where accendantId = #{accendantId,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectAll" resultType="com.wlp.bean.Accendant">
+        select
+        <include refid="Base_Column_List"/>
+        from accendant
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from accendant
+        where accendantId = #{accendantId,jdbcType=INTEGER}
+    </delete>
+	
+    <insert id="insert" keyColumn="accendantId" keyProperty="accendantId" parameterType="com.wlp.bean.Accendant"
+            useGeneratedKeys="true">
+        insert into accendant (accendantName, phone)
+        values (#{accendantName,jdbcType=VARCHAR}, #{phone,jdbcType=CHAR})
+    </insert>
+	
+    <insert id="insertSelective" keyColumn="accendantId" keyProperty="accendantId"
+            parameterType="com.wlp.bean.Accendant" useGeneratedKeys="true">
+        insert into accendant
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="accendantName != null">
+                accendantName,
+            </if>
+            <if test="phone != null">
+                phone,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="accendantName != null">
+                #{accendantName,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                #{phone,jdbcType=CHAR},
+            </if>
+        </trim>
+    </insert>
+	
+	
+    <update id="updateByPrimaryKeySelective" parameterType="com.wlp.bean.Accendant">
+        update accendant
+        <set>
+            <if test="accendantName != null">
+                accendantName = #{accendantName,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                phone = #{phone,jdbcType=CHAR},
+            </if>
+        </set>
+        where accendantId = #{accendantId,jdbcType=INTEGER}
+    </update>
+	
+	
+    <update id="updateByPrimaryKey" parameterType="com.wlp.bean.Accendant">
+        update accendant
+        set accendantName = #{accendantName,jdbcType=VARCHAR},
+            phone         = #{phone,jdbcType=CHAR}
+        where accendantId = #{accendantId,jdbcType=INTEGER}
+    </update>
+	
+	<select id="getAccMax" resultType="java.lang.Integer">
+		select max(accendantId) from accendant
+	</select>
+</mapper>

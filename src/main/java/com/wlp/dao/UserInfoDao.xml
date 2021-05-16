@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wlp.dao.UserInfoDao">
+
+    <!-- 结果映射 -->
+    <resultMap id="BaseResultMap" type="com.wlp.bean.UserInfo">
+        <result column="userId" jdbcType="INTEGER" property="userId"/>
+        <result column="userName" jdbcType="VARCHAR" property="userName"/>
+        <result column="loginName" jdbcType="VARCHAR" property="loginName"/>
+        <result column="userPwd" jdbcType="VARCHAR" property="userPwd"/>
+        <result column="createDate" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="loginState" jdbcType="INTEGER" property="loginState"/>
+        <result column="isDelete" jdbcType="INTEGER" property="isDelete"/>
+    </resultMap>
+
+    <!-- 基础字段 -->
+    <sql id="Base_Column_List">
+        userId, userName, loginName, userPwd, createDate, loginState
+    </sql>
+
+    <!-- 插入 -->
+    <insert id="insert" parameterType="com.wlp.bean.UserInfo">
+        insert into userinfo (userName, loginName,
+                              userPwd, createDate, loginState,)
+        values (#{userName,jdbcType=VARCHAR}, #{loginName,jdbcType=VARCHAR},
+                #{userPwd,jdbcType=VARCHAR}, #{createDate,jdbcType=TIMESTAMP}, #{loginState,jdbcType=INTEGER},
+    </insert>
+
+    <!-- 可选择性插入 -->
+    <insert id="insertSelective" parameterType="com.wlp.bean.UserInfo">
+        insert into userinfo
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userName != null">
+                userName,
+            </if>
+            <if test="loginName != null">
+                loginName,
+            </if>
+            <if test="userPwd != null">
+                userPwd,
+            </if>
+            <if test="createDate != null">
+                createDate,
+            </if>
+            <if test="loginState != null">
+                loginState,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userName != null">
+                #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="loginName != null">
+                #{loginName,jdbcType=VARCHAR},
+            </if>
+            <if test="userPwd != null">
+                #{userPwd,jdbcType=VARCHAR},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="loginState != null">
+                #{loginState,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 可选择性更新(包括逻辑删除) -->
+    <update id="updateByPrimaryKeySelective" parameterType="userInfo">
+        update userinfo
+        <set>
+            <if test="userName != null">
+                userName = #{userName},
+            </if>
+            <if test="loginName != null">
+                loginName = #{loginName},
+            </if>
+            <if test="userPwd != null">
+                userPwd = #{userPwd},
+            </if>
+            <if test="loginState != null">
+                loginState = #{loginState},
+            </if>
+            <if test="isDelete != null">
+                isDelete = #{isDelete},
+            </if>
+        </set>
+        where userId = #{userId}
+    </update>
+
+    <!-- 删除(逻辑删除不用此方法) -->
+    <delete id="deleteByPrimaryKey" parameterType="int">
+        delete
+        from userinfo
+        where userId = #{userId}
+    </delete>
+
+    <!-- 查询所有 -->
+    <select id="selectAll" resultType="com.wlp.bean.UserInfo">
+        select
+        <include refid="Base_Column_List"/>
+        from userinfo
+        where isDelete=0
+    </select>
+
+    <!--  登录验证  -->
+    <select id="verify" resultType="com.wlp.bean.UserInfo" parameterType="userInfo">
+        select
+        <include refid="Base_Column_List"/>
+        from userinfo
+        where loginName=#{loginName} and userPwd=#{userPwd}
+    </select>
+	
+	<select id="getRoleByUserId" resultMap="roleAndRources">
+		SELECT r.roleId r_roleId,r.roleName r_roleName,
+		re.`resId` re_resId,re.`resName` re_resName,re.`resUrl` re_resUrl,
+		re.`level` re_level,re.`parentId` re_parentId
+		FROM roleinfo r,privliege p,`resources` re, `roleresource` rs, userinfo u
+		WHERE u.`userId` = p.`userId` AND p.`roleId` = r.`roleId` AND p.`roleId` = rs.`roleId`
+		AND rs.`resId` = re.`resId`
+		AND u.userId = #{userId}
+	</select>
+
+	<resultMap id="roleAndRources" type="RoleInfo">
+			<result property="roleId" column="r_roleId"/>
+			<result property="roleName" column="r_roleName"/>
+			<collection property="resourcesList" ofType="com.wlp.bean.Resources">
+				<result column="re_resId" property="resId"/>
+				<result column="re_resName" property="resName"/>
+				<result column="re_resUrl" property="resUrl"/>
+				<result column="re_level" property="level"/>
+				<result column="re_parentId" property="parentId"/>
+			</collection>
+	</resultMap>
+	
+	<select id="getRouter" resultMap="router">
+		select routerPath,component,`name`,redirect,routerLevel,parentId,title,icon
+		from roleinfo r,privliege p,router ro,roleRouter re,userinfo u where
+		u.userId = p.userId and p.roleId = re.roleId and re.rolResId = ro.routerId
+		and u.userId = #{userId}
+	</select>
+	
+	<resultMap id="router" type="Router">
+		<result column="routerPath" property="path"/>
+		<result column="component" property="component"/>
+		<result column="name" property="name"/>
+		<result column="redirect" property="redirect"/>
+		<result column="routerLevel" property="level"/>
+		<result column="parentId" property="parentId"/>
+		<association property="meta" javaType="com.wlp.bean.Meta">
+			<result column="title" property="title"/>
+			<result column="icon" property="icon"/>
+		</association>
+	</resultMap>
+	
+	<select id="getRole" resultType="RoleInfo">
+		select roleName from privliege p,roleInfo r where
+		r.roleId = p.roleId and userId = #{userId}
+	</select>
+	
+	<select id="getUserId" resultType="UserInfo">
+		select userId from userInfo
+	</select>
+	
+	<select id="getUserIdMax" resultType="java.lang.Integer">
+		select max(userId) from userInfo
+	</select>
+	
+</mapper>

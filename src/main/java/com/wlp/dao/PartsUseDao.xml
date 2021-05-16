@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wlp.dao.PartsUseDao">
+
+    <!-- 基础字段映射 -->
+    <resultMap id="BaseResultMap" type="com.wlp.bean.PartsUse">
+        <id column="useId" jdbcType="INTEGER" property="useId"/>
+        <result column="maintainId" jdbcType="INTEGER" property="maintainId"/>
+        <result column="partsId" jdbcType="INTEGER" property="partsId"/>
+    </resultMap>
+
+    <!-- 基础字段 -->
+    <sql id="Base_Column_List">
+        useId, maintainId, partsId
+    </sql>
+
+    <!-- 根据主键查询 -->
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from partsuse
+        where useId = #{useId,jdbcType=INTEGER}
+    </select>
+	
+	<select id="selectAll" resultType="PartsUse">
+		select
+		<include refid="Base_Column_List">
+		</include>
+		where partsuse
+	</select>
+
+    <!-- 删除 -->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from partsuse
+        where useId = #{useId,jdbcType=INTEGER}
+    </delete>
+
+    <!-- 插入 -->
+    <insert id="insert" keyColumn="useId" keyProperty="useId" parameterType="com.wlp.bean.PartsUse"
+            useGeneratedKeys="true">
+        insert into partsuse (maintainId, partsId)
+        values (#{maintainId,jdbcType=INTEGER}, #{partsId,jdbcType=INTEGER})
+    </insert>
+
+    <!-- 可选择性插入 -->
+    <insert id="insertSelective" keyColumn="useId" keyProperty="useId" parameterType="com.wlp.bean.PartsUse"
+            useGeneratedKeys="true">
+        insert into partsuse
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="maintainId != null">
+                maintainId,
+            </if>
+            <if test="partsId != null">
+                partsId,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="maintainId != null">
+                #{maintainId,jdbcType=INTEGER},
+            </if>
+            <if test="partsId != null">
+                #{partsId,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 可选择性更新 -->
+    <update id="updateByPrimaryKeySelective" parameterType="com.wlp.bean.PartsUse">
+        update partsuse
+        <set>
+            <if test="maintainId != null">
+                maintainId = #{maintainId,jdbcType=INTEGER},
+            </if>
+            <if test="partsId != null">
+                partsId = #{partsId,jdbcType=INTEGER},
+            </if>
+        </set>
+        where useId = #{useId,jdbcType=INTEGER}
+    </update>
+
+    <!-- 更新 -->
+    <update id="updateByPrimaryKey" parameterType="com.wlp.bean.PartsUse">
+        update partsuse
+        set maintainId = #{maintainId,jdbcType=INTEGER},
+            partsId    = #{partsId,jdbcType=INTEGER}
+        where useId = #{useId,jdbcType=INTEGER}
+    </update>
+</mapper>

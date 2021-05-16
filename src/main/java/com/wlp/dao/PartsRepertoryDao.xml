@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wlp.dao.PartsRepertoryDao">
+	<select id="selectAll" resultMap="partsRepertoryMap">
+		SELECT `repertoryId`, py.partsId py_id,partsName,price,partsPrice,py.`count` py_c, p.count p_c
+		FROM partsrepertory py,partsinfo p WHERE py.partsId = p.partsId
+	</select>
+	
+	<select id="selectPartsAll" resultType="PartsInfo">
+		SELECT py.partsId,partsName,price, p.count
+		FROM partsrepertory py,partsinfo p WHERE py.partsId = p.partsId
+	</select>
+	
+	<select id="selectPartsExist" resultType="java.lang.Integer">
+		SELECT partsId FROM `partsrepertory` WHERE partsId = #{partsId}
+	</select>
+	
+	<update id="upCount" parameterType="partsRepertory">
+		UPDATE `partsrepertory` SET `count` = `count` + #{count} WHERE partsId = #{partsId};
+	</update>
+	
+	<insert id="inPartsInfo" parameterType="partsRepertory">
+		insert into partsrepertory(partsId,`count`)
+		values (#{partsId},#{count})
+	</insert>
+	
+	<update id="uppartsPrice" parameterType="java.lang.Integer">
+		update partsrepertory set partsPrice = #{partsPrice} where repertoryId = #{partsId}
+	</update>
+	
+	<resultMap id="partsRepertoryMap" type="partsRepertory">
+		<result column="repertoryId" property="repertoryId"/>
+		<result column="partsPrice" property="partsPrice"/>
+		<result column="py_c" property="count"/>
+		<association property="partsInfo" javaType="com.wlp.bean.PartsInfo">
+			<result column="py_id" property="partsId"/>
+			<result column="partsName" property="partsName"/>
+			<result column="price" property="price"/>
+			<result column="p_c" property="count"/>
+		</association>
+	</resultMap>
+	
+</mapper>

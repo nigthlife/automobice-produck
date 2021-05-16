@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wlp.dao.ClientInfoDao">
+
+    <resultMap id="BaseResultMap" type="com.wlp.bean.ClientInfo">
+        <id column="clientId" jdbcType="INTEGER" property="clientId"/>
+        <result column="clientName" jdbcType="VARCHAR" property="clientName"/>
+        <result column="sex" jdbcType="CHAR" property="sex"/>
+        <result column="phone" jdbcType="CHAR" property="phone"/>
+        <result column="createDate" jdbcType="TIMESTAMP" property="createDate"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        clientId, clientName, sex, phone, createDate
+    </sql>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from clientinfo
+        where clientId = #{clientId,jdbcType=INTEGER}
+    </select>
+	
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from clientinfo
+        where clientId = #{clientId,jdbcType=INTEGER}
+    </delete>
+
+    <insert id="insert" parameterType="ClientInfo">
+        insert into clientinfo (clientName, sex, phone,
+                                createDate)
+        values (#{clientName,jdbcType=VARCHAR}, #{sex,jdbcType=CHAR}, #{phone,jdbcType=CHAR},
+                now())
+    </insert>
+
+    <insert id="insertSelective" keyColumn="clientId" keyProperty="clientId" parameterType="ClientInfo"
+            useGeneratedKeys="true">
+        insert into clientinfo
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="clientName != null">
+                clientName,
+            </if>
+            <if test="sex != null">
+                sex,
+            </if>
+            <if test="phone != null">
+                phone,
+            </if>
+            <if test="createDate != null">
+                createDate,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="clientName != null">
+                #{clientName,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null">
+                #{sex,jdbcType=CHAR},
+            </if>
+            <if test="phone != null">
+                #{phone,jdbcType=CHAR},
+            </if>
+            <if test="createDate != null">
+                #{createDate,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.wlp.bean.ClientInfo">
+        update clientinfo
+        <set>
+            <if test="clientName != null">
+                clientName = #{clientName,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null">
+                sex = #{sex,jdbcType=CHAR},
+            </if>
+            <if test="phone != null">
+                phone = #{phone,jdbcType=CHAR},
+            </if>
+        </set>
+        where clientId = #{clientId,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.wlp.bean.ClientInfo">
+        update clientinfo
+        set clientName = #{clientName,jdbcType=VARCHAR},
+            sex        = #{sex,jdbcType=CHAR},
+            phone      = #{phone,jdbcType=CHAR}
+        where clientId = #{clientId}
+    </update>
+
+	<select id="getClientInfoAll" resultType="com.wlp.bean.ClientInfo">
+		select
+		<include refid="Base_Column_List">
+		</include>
+		from clientinfo
+	</select>
+	
+	<select id="getMaxId" resultType="java.lang.Integer">
+		select max(clientId) from clientinfo
+	</select>
+	
+	<select id="getClinetIdAndName" resultType="ClientInfo">
+		select clientId,clientName
+		from clientinfo
+	</select>
+</mapper>

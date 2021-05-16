@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wlp.dao.SubscribeDao">
+	<sql id="Base_Subscribe">
+		s.Id,carId,subscribeDate,subscribeInfo
+	</sql>
+	
+	<select id="getSubscribeAll" resultMap="subscribeMap">
+		select
+		s.`Id`s_id,
+		s.`subscribeDate` s_subscribeDate,
+		s.`subscribeInfo` s_subscribeInfo,
+		c.`clientName`c_name,
+		c.`sex`c_sex,
+		c.`phone`c_phone,
+		ci.carBrand s_car
+		from subscribe s,`clientinfo` c ,carinfo ci
+		WHERE s.`carId` = ci.`carId` and ci.clientId = c.clientId
+	</select>
+	
+	<resultMap id="subscribeMap" type="Subscribe">
+		<result column="s_id" property="Id"/>
+		<result column="s_subscribeDate" property="subscribeDate"/>
+		<result column="s_subscribeInfo" property="subscribeInfo"/>
+		<association property="clientInfoList" javaType="ClientInfo">
+			<result column="c_name" property="clientName"/>
+			<result column="c_sex" property="sex"/>
+			<result column="c_phone" property="phone"/>
+		</association>
+		<association property="carInfo" javaType="com.wlp.bean.CarInfo">
+			<result column="s_car" property="carBrand"/>
+		</association>
+	</resultMap>
+	
+	<update id="upSubscribe" parameterType="Subscribe">
+		update subscribe
+		<set>
+			<if  test="carId != null">
+				carId = #{carId},
+			</if>
+			<if test="subscribeInfo">
+				subscribeInfo = #{subscribeInfo},
+			</if>
+		</set>
+		<where>
+			<if test="Id != null">
+				Id = #{Id}
+			</if>
+			<if test="Id == null">
+				1 = 2
+			</if>
+		</where>
+	</update>
+	
+	<delete id="deSubscribe" parameterType="Subscribe">
+		delete from subscribe
+		where
+		<if test="Id != null and Id != ''">
+			Id = #{Id}
+		</if>
+		<if test="Id == null">
+			1 = 2
+		</if>
+	</delete>
+	
+	<insert id="inSubscribe" parameterType="Subscribe">
+		insert into subscribe
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="carId != null">
+				carId,
+			</if>
+			<if test="subscribeInfo != null">
+				subscribeInfo
+			</if>
+		</trim>
+		values
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="carId != null">
+				#{carId},
+			</if>
+			<if test="subscribeInfo != null">
+				#{subscribeInfo}
+			</if>
+		</trim>
+	
+	</insert>
+	
+	<select id="getMaxId" resultType="java.lang.Integer">
+		select max(Id) from subscribe
+	</select>
+</mapper>

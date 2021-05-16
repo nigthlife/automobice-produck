@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wlp.dao.RoleInfoDao">
+
+    <!-- 结果映射 -->
+    <resultMap id="BaseResultMap" type="com.wlp.bean.RoleInfo">
+        <result column="roleId" jdbcType="INTEGER" property="roleId"/>
+        <result column="roleName" jdbcType="VARCHAR" property="roleName"/>
+        <result column="roleDesc" jdbcType="VARCHAR" property="roleDesc"/>
+        <result column="isEnable" jdbcType="INTEGER" property="isEnable"/>
+    </resultMap>
+
+    <!-- 基础字段 -->
+    <sql id="Base_Column_List">
+        roleId, roleName, roleDesc, isEnable
+    </sql>
+
+    <!-- 插入 -->
+    <insert id="insert" parameterType="com.wlp.bean.RoleInfo">
+        insert into roleinfo (roleId, roleName, roleDesc,
+                              isEnable)
+        values (#{roleId,jdbcType=INTEGER}, #{roleName,jdbcType=VARCHAR}, #{roleDesc,jdbcType=VARCHAR},
+                #{isEnable,jdbcType=INTEGER})
+    </insert>
+
+    <!-- 可选择性插入 -->
+    <insert id="insertSelective" parameterType="com.wlp.bean.RoleInfo">
+        insert into roleinfo
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="roleId != null">
+                roleId,
+            </if>
+            <if test="roleName != null">
+                roleName,
+            </if>
+            <if test="roleDesc != null">
+                roleDesc,
+            </if>
+            <if test="isEnable != null">
+                isEnable,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="roleId != null">
+                #{roleId,jdbcType=INTEGER},
+            </if>
+            <if test="roleName != null">
+                #{roleName,jdbcType=VARCHAR},
+            </if>
+            <if test="roleDesc != null">
+                #{roleDesc,jdbcType=VARCHAR},
+            </if>
+            <if test="isEnable != null">
+                #{isEnable,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <!--可选择性更新-->
+    <update id="updateByPrimaryKeySelective" parameterType="roleInfo">
+        update roleinfo
+        <set>
+            <if test="roleName != null">
+                roleName = #{roleName},
+            </if>
+            <if test="roleDesc != null">
+                roleDesc = #{roleDesc},
+            </if>
+            <if test="isEnable != null">
+                isEnable = #{isEnable},
+            </if>
+        </set>
+        where roleId = #{roleId,jdbcType=INTEGER}
+    </update>
+
+    <!-- 删除 -->
+    <delete id="deleteByPrimaryKey" parameterType="int">
+        delete
+        from roleinfo
+        where roleId = #{roleId}
+    </delete>
+
+    <!-- 查询所有 -->
+    <select id="selectAll" resultType="com.wlp.bean.RoleInfo">
+        select
+        <include refid="Base_Column_List"/>
+        from roleinfo
+    </select>
+	
+	<select id="getMax" resultType="java.lang.Integer">
+		select max(roleId) from roleinfo
+	</select>
+</mapper>

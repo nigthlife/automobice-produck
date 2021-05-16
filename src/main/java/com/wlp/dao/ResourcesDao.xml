@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wlp.dao.ResourcesDao">
+
+    <resultMap id="BaseResultMap" type="com.wlp.bean.Resources">
+        <result column="resId" jdbcType="INTEGER" property="resId"/>
+        <result column="resName" jdbcType="VARCHAR" property="resName"/>
+        <result column="resUrl" jdbcType="VARCHAR" property="resUrl"/>
+        <result column="level" jdbcType="INTEGER" property="level"/>
+        <result column="parentId" jdbcType="INTEGER" property="parentId"/>
+        <result column="isEnable" jdbcType="INTEGER" property="isEnable"/>
+    </resultMap>
+
+    <!-- 基础字段 -->
+    <sql id="Base_Column_List">
+        resId, resName, resUrl, `level`, parentId, isEnable
+    </sql>
+
+    <!--  插入  -->
+    <insert id="insert" parameterType="com.wlp.bean.Resources">
+        insert into resources (resId, resName, resUrl,
+                               `level`, parentId, isEnable)
+        values (#{resId,jdbcType=INTEGER}, #{resName,jdbcType=VARCHAR}, #{resUrl,jdbcType=VARCHAR},
+                #{level,jdbcType=INTEGER}, #{parentId,jdbcType=INTEGER}, #{isEnable,jdbcType=INTEGER})
+    </insert>
+
+    <!--  可选择性插入  -->
+    <insert id="insertSelective" parameterType="com.wlp.bean.Resources">
+        insert into resources
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="resId != null">
+                resId,
+            </if>
+            <if test="resName != null">
+                resName,
+            </if>
+            <if test="resUrl != null">
+                resUrl,
+            </if>
+            <if test="level != null">
+                `level`,
+            </if>
+            <if test="parentId != null">
+                parentId,
+            </if>
+            <if test="isEnable != null">
+                isEnable,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="resId != null">
+                #{resId,jdbcType=INTEGER},
+            </if>
+            <if test="resName != null">
+                #{resName,jdbcType=VARCHAR},
+            </if>
+            <if test="resUrl != null">
+                #{resUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="level != null">
+                #{level,jdbcType=INTEGER},
+            </if>
+            <if test="parentId != null">
+                #{parentId,jdbcType=INTEGER},
+            </if>
+            <if test="isEnable != null">
+                #{isEnable,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <!--  可选择性更新-->
+    <update id="updateByPrimaryKeySelective" parameterType="resources">
+        update resources
+        <set>
+            <if test="resName != null">
+                resName = #{resName},
+            </if>
+            <if test="resUrl != null">
+                resUrl = #{resUrl},
+            </if>
+            <if test="level != null">
+                level = #{level},
+            </if>
+            <if test="isEnable != null">
+                isEnable = #{isEnable},
+            </if>
+            <if test="parentId != null">
+                parentId = #{parentId},
+            </if>
+        </set>
+        where resId = #{resId,jdbcType=INTEGER}
+    </update>
+
+    <!--  删除  -->
+    <delete id="deleteByPrimaryKey" parameterType="int">
+        delete
+        from resources
+        where resId = #{resId}
+    </delete>
+
+    <!--  查询所有  -->
+    <select id="selectAll" resultType="com.wlp.bean.Resources">
+        select
+        <include refid="Base_Column_List"/>
+        from resources
+    </select>
+</mapper>
