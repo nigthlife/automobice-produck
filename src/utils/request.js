@@ -10,7 +10,7 @@ import { getToken } from '@/utils/auth'
 const service = axios.create({
   // 设置主机名url
   // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
-  baseURL: 'http://localhost:80/Automobile',
+  baseURL: 'http://8.140.28.119:8080/Automobile',
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 5000 // request timeout
   // headers: {

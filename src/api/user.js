@@ -1,5 +1,4 @@
 import request from '@/utils/request'
-import Qs from 'qs'
 /**
  * 用户登录
  * @param {账号密码} data
