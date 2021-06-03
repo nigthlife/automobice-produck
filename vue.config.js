@@ -51,10 +51,11 @@ module.exports = {
   },
   chainWebpack(config) {
     // it can improve the speed of the first screen, it is recommended to turn on preload
+    // 它可以提高第一次加载的速度，建议开启预载
     config.plugin('preload').tap(() => [
       {
         rel: 'preload',
-        // to ignore runtime.js
+        // to ignore runtime.js 忽略runtime.js
         // https://github.com/vuejs/vue-cli/blob/dev/packages/@vue/cli-service/lib/config/app.js#L171
         fileBlacklist: [/\.map$/, /hot-update\.js$/, /runtime\..*\.js$/],
         include: 'initial'

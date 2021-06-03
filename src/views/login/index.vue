@@ -93,7 +93,7 @@ export default {
         // username: 'admin',
         // password: '111111'
         username: 'admin',
-        password: '6666'
+        password: ''
       },
       // trigger： 触发焦点事件
       // required：必需

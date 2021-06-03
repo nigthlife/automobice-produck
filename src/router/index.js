@@ -5,7 +5,7 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
-
+const index = import('@/views/dashboard/index')
 /**
  * Note: sub-menu only appear when route children.length >= 1
  * Detail see: https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
@@ -180,6 +180,11 @@ export const constantRouterMap = [
     component: () => import('@/views/login/index'),
     // 判断路由入口是否可见的开关
     hidden: true
+  },
+  {
+    path: '/test',
+    component: () => import('@/views/test/test'),
+    hidden: true
   }
 ]
 /**
@@ -224,6 +229,7 @@ export const testRouterMap = [
     hidden: true
   }
 ]
+
 /**
  * 动态路由
  */
@@ -237,7 +243,7 @@ export const asyncRouterMap = [
     children: [{
       path: 'dashboard',
       name: 'Dashboard',
-      component: () => import('@/views/dashboard/index'),
+      component: index,
       meta: {
         title: 'Dashboard',
         icon: 'dashboard',

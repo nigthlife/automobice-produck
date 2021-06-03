@@ -5,7 +5,6 @@ import request from '@/utils/request'
  * @param {分页信息} query
  */
 export function initAccendantData(query) {
-
   if (query === undefined) {
     return request({
       url: '/accendant/getAccAll',
